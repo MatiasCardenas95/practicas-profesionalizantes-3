@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+<style>
+
+table, td,tr, th
+{
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+</style>
+<body>
+
+</body>
+
+<script type="text/javascript">
+
+
+class CRUDModel 
+{
+  constructor() 
+  {
+    this.dataContainer = new Array();
+  }
+
+  create(data)
+  {
+    this.dataContainer.push(data);
+    console.log(this.dataContainer);
+  }
+
+  edit(index, newData) 
+  {
+    this.dataContainer[index] = newData;
+    console.log(this.dataContainer);
+  }
+
+  delete(index) 
+  {
+    this.dataContainer.splice(index, 1);
+    console.log(this.dataContainer);
+  }
+}
+
+class CRUDViewController 
+{
+  constructor(view, model) 
+  {
+    this.innerView = view;
+    this.innerModel = model;
+
+    this.innerView.createButton.onclick = () => this.oncreatebuttonclick();
+    this.innerView.updateButton.onclick = () => this.onupdatebuttonclick();
+    this.innerView.deleteButton.onclick = () => this.ondeletebuttonclick();
+  }
+
+  oncreatebuttonclick() 
+  {
+    let dataFromView = this.innerView.getDataInput();
+    this.innerModel.create(dataFromView);
+    this.innerView.render(this.innerModel.dataContainer);
+    this.innerView.clearInputCreate();
+  }
+
+  onupdatebuttonclick() 
+  {
+    let updateData = this.innerView.getUpdateDataInput();
+    let idToUpdate = this.innerView.getUpdateIdInput();
+    let dataIndex = this.innerModel.dataContainer.findIndex(data => data.id === parseInt(idToUpdate));
+
+    if (dataIndex !== -1) {
+      this.innerModel.edit(dataIndex, updateData);
+      this.innerView.render(this.innerModel.dataContainer);
+    }
+    this.innerView.clearInputUpdate();
+  }
+
+  ondeletebuttonclick() 
+  {
+    let idToDelete = this.innerView.getDeleteIdInput();
+    let dataIndex = this.innerModel.dataContainer.findIndex(data => data.id === parseInt(idToDelete));
+
+    if (dataIndex !== -1)
+    {
+      this.innerModel.delete(dataIndex);
+      this.innerView.render(this.innerModel.dataContainer);
+    }
+    this.innerView.clearInputDelete();
+  }
+}
+
+class CRUDView extends HTMLElement
+{
+  constructor() 
+  {
+    super();
+
+    this.viewTitle = document.createElement('h1');
+    this.viewTitle.innerText = 'CRUD Application Example';
+
+    this.createButton = document.createElement('button');
+    this.createButton.innerText = 'create';
+
+    this.nameInput = document.createElement('input');
+    this.nameInput.type = 'text';
+    this.nameInput.placeholder = 'Nombre....';
+
+    this.surnameInput = document.createElement('input');
+    this.surnameInput.type = 'text';
+    this.surnameInput.placeholder = 'Apellido....';
+
+    this.phoneInput = document.createElement('input');
+    this.phoneInput.type = 'text';
+    this.phoneInput.placeholder = 'Telefono....';
+
+    this.optionsInput = document.createElement('select');
+
+    const option1 = document.createElement("option");
+    const option2 = document.createElement("option");
+    const option3 = document.createElement("option");
+    const option4 = document.createElement("option");
+    const option5 = document.createElement("option");
+    const option6 = document.createElement("option");
+
+    option1.value = "Amigos";
+    option1.text = "Amigos";
+
+    option2.value = "Trabajo";
+    option2.text = "Trabajo";
+
+    option3.value = "Estudio";
+    option3.text = "Estudio";
+
+    option4.value = "Familia";
+    option4.text = "Familia";
+
+    option5.value = "Favoritos";
+    option5.text = "Favoritos";
+
+    option6.value = "Servicios";
+    option6.text = "Servicios";
+
+    this.optionsInput.add(option1, null);
+    this.optionsInput.add(option2, null);
+    this.optionsInput.add(option3, null);
+    this.optionsInput.add(option4, null);
+    this.optionsInput.add(option5, null);
+    this.optionsInput.add(option6, null);
+
+    this.updateButton = document.createElement('button');
+    this.updateButton.innerText = 'update';
+
+    this.idUpdateInput = document.createElement('input')
+    this.idUpdateInput.type = 'text';
+    this.idUpdateInput.placeholder = 'ID';
+
+    this.nameUpdateInput = document.createElement('input');
+    this.nameUpdateInput.type = 'text';
+    this.nameUpdateInput.placeholder = 'Nombre....';
+
+    this.surnameUpdateInput = document.createElement('input');
+    this.surnameUpdateInput.type = 'text';
+    this.surnameUpdateInput.placeholder = 'Apellido....';
+
+    this.phoneUpdateInput = document.createElement('input');
+    this.phoneUpdateInput.type = 'text';
+    this.phoneUpdateInput.placeholder = 'Telefono....';
+
+    this.optionsUpdateInput = document.createElement('select');
+
+    const optionUpdate1 = document.createElement("option");
+    const optionUpdate2 = document.createElement("option");
+    const optionUpdate3 = document.createElement("option");
+    const optionUpdate4 = document.createElement("option");
+    const optionUpdate5 = document.createElement("option");
+    const optionUpdate6 = document.createElement("option");
+
+    optionUpdate1.value = "Amigos";
+    optionUpdate1.text = "Amigos";
+
+    optionUpdate2.value = "Trabajo";
+    optionUpdate2.text = "Trabajo";
+
+    optionUpdate3.value = "Estudio";
+    optionUpdate3.text = "Estudio";
+
+    optionUpdate4.value = "Familia";
+    optionUpdate4.text = "Familia";
+
+    optionUpdate5.value = "Favoritos";
+    optionUpdate5.text = "Favoritos";
+
+    optionUpdate6.value = "Servicios";
+    optionUpdate6.text = "Servicios";
+
+    this.optionsUpdateInput.add(optionUpdate1, null);
+    this.optionsUpdateInput.add(optionUpdate2, null);
+    this.optionsUpdateInput.add(optionUpdate3, null);
+    this.optionsUpdateInput.add(optionUpdate4, null);
+    this.optionsUpdateInput.add(optionUpdate5, null);
+    this.optionsUpdateInput.add(optionUpdate6, null);
+
+    this.deleteButton = document.createElement('button');
+    this.deleteButton.innerText = 'delete';
+
+    this.idDeleteInput = document.createElement('input')
+    this.idDeleteInput.type = 'text';
+    this.idDeleteInput.placeholder = 'ID';
+
+    this.dataTitle = document.createElement('h4');
+    this.dataTitle.innerText = 'Data:';
+
+    this.result = document.createElement('table');
+    this.resultHeader = this.result.createTHead();
+    this.resultBody = this.result.createTBody();
+
+    let columnTags = ['id','Name', 'Surname', 'Phone', 'Category'];
+
+    this.resultHeaderRow = this.resultHeader.insertRow();
+
+    for (let tag of columnTags) 
+    {
+      let columnElement = document.createElement('th');
+      columnElement.innerText = tag;
+      this.resultHeaderRow.insertCell().appendChild(columnElement);
+    }
+
+    this.appendChild(this.viewTitle);
+
+    this.appendChild(this.nameInput);
+    this.appendChild(this.surnameInput);
+    this.appendChild(this.phoneInput);
+    this.appendChild(this.optionsInput);
+    this.appendChild(this.createButton);
+
+    this.appendChild(document.createElement('br'));
+    this.appendChild(document.createElement('br'));
+    this.appendChild(this.idUpdateInput);
+    this.appendChild(this.nameUpdateInput);
+    this.appendChild(this.surnameUpdateInput);
+    this.appendChild(this.phoneUpdateInput);
+    this.appendChild(this.optionsUpdateInput);
+    this.appendChild(this.updateButton);
+
+    this.appendChild(document.createElement('br'));
+    this.appendChild(document.createElement('br'));
+
+    this.appendChild(this.idDeleteInput)
+    this.appendChild(this.deleteButton);
+
+    this.appendChild(document.createElement('br'));
+    this.appendChild(this.dataTitle);
+    this.appendChild(this.result);
+
+    this.innerModel = new CRUDModel();
+    this.innerController = new CRUDViewController(this, this.innerModel);
+  }
+
+  clearInputCreate() 
+  {
+    this.nameInput.value = '';
+    this.surnameInput.value = '';
+    this.phoneInput.value = '';
+  }
+
+  clearInputUpdate() 
+  {
+    this.idUpdateInput.value = '';
+    this.nameUpdateInput.value = '';
+    this.surnameUpdateInput.value = '';
+    this.phoneUpdateInput.value = '';
+  }
+
+  clearInputDelete() 
+  {
+    this.idDeleteInput.value = '';
+  }
+
+  getDataInput() 
+  {
+    let data = 
+    {
+      id: this.innerModel.dataContainer.length,
+      name: this.nameInput.value,
+      surname: this.surnameInput.value,
+      phone: this.phoneInput.value,
+      category: this.optionsInput.value
+    }
+
+    return data;
+  }
+
+  getUpdateIdInput() 
+  {
+    return this.idUpdateInput.value;
+  }
+
+  getSelectedDataIndex() 
+  {
+    return this.selectedIndex;
+  }
+
+  getDeleteIdInput() 
+  {
+    return this.idDeleteInput.value;
+  }
+
+  onTableRowClick(event) 
+  {
+    let rowIndex = event.target.parentNode.rowIndex - 1;
+    this.selectedIndex = rowIndex;
+    this.populateUpdateFields(rowIndex);
+  }
+
+  populateUpdateFields(index) 
+  {
+    let data = this.innerModel.dataContainer[index];
+
+    if (data) 
+    {
+      this.idUpdateInput.value = data.id.toString();
+      this.nameUpdateInput.value = data.name;
+      this.surnameUpdateInput.value = data.surname;
+      this.phoneUpdateInput.value = data.phone;
+      this.optionsUpdateInput.value = data.category;
+    }
+  }
+
+  getUpdateDataInput() 
+  {
+    let data = 
+    {
+      id: parseInt(this.idUpdateInput.value),
+      name: this.nameUpdateInput.value,
+      surname: this.surnameUpdateInput.value,
+      phone: this.phoneUpdateInput.value,
+      category: this.optionsUpdateInput.value
+    };
+
+    return data;
+  }
+
+  render(dataContainer) 
+  {
+    this.resultBody.innerHTML = '';
+
+    for (let i = 0; i < dataContainer.length; i++) {
+      let row = this.resultBody.insertRow();
+      let data = dataContainer[i];
+
+      row.insertCell().appendChild(document.createTextNode(data.id));
+      row.insertCell().appendChild(document.createTextNode(data.name));
+      row.insertCell().appendChild(document.createTextNode(data.surname));
+      row.insertCell().appendChild(document.createTextNode(data.phone));
+      row.insertCell().appendChild(document.createTextNode(data.category));
+
+      row.style.backgroundColor = getColorByCategory(data.category);
+    }
+  }  
+}
+
+function getColorByCategory(category) 
+{
+  switch (category) 
+  {
+    case 'Amigos':
+      return '#FFC0CB'; 
+    case 'Trabajo':
+      return '#87CEFA'; 
+    case 'Estudio':
+      return '#98FB98'; 
+    case 'Familia':
+      return '#FFD700'; 
+    case 'Favoritos':
+      return '#FFA07A'; 
+    case 'Servicios':
+      return '#FF1493'; 
+    default:
+      return '';
+  }
+}
+
+customElements.define('x-crud', CRUDView);
+
+function main() {
+  let appView = new CRUDView();
+  document.body.appendChild(appView);
+}
+
+window.onload = main;
+
+
+</script>
+
+</html>
